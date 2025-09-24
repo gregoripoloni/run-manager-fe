@@ -19,14 +19,13 @@
         {
           label: 'Cadastrar evento',
           icon: 'pi pi-plus-circle',
+          command: () => {
+            router.push('/events/add')
+          }
         },
         {
           label: 'Consultar eventos',
           icon: 'pi pi-list',
-          class: 'text-primary-700',
-          command: () => {
-            router.push('/events')
-          }
         },
       ],
     },

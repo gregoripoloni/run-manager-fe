@@ -7,7 +7,7 @@
   <Menu />
   <div class="flex h-full pt-15">
     <Sidebar />
-    <main class="flex items-center justify-center w-full min-h-full pl-70">
+    <main class="flex items-center justify-center w-full min-h-full p-10 pl-80">
       <RouterView />
     </main>
   </div>

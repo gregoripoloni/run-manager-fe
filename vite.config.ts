@@ -14,6 +14,7 @@ export default defineConfig({
         enabled: true,
       },
       manifest: {
+        name: 'Run Manager',
         icons: [
           {
             src: 'logo-192.png',
@@ -22,6 +23,7 @@ export default defineConfig({
             purpose: 'any',
           },
         ],
+        theme_color: '#14b8a6',
         display: 'fullscreen',
         prefer_related_applications: false,
       },
