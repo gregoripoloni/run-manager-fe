@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { ref } from "vue";
+  import Panel from "primevue/panel";
   import PanelMenu from "primevue/panelmenu";
   import { useRouter } from 'vue-router'
 
@@ -15,39 +16,37 @@
     },
     {
       label: 'Eventos',
+      icon: 'pi pi-calendar',
       items: [
         {
-          label: 'Cadastrar evento',
-          icon: 'pi pi-plus-circle',
+          label: 'Cadastrar',
           command: () => {
             router.push('/events/add')
           }
         },
         {
-          label: 'Consultar eventos',
-          icon: 'pi pi-list',
+          label: 'Consultar',
         },
       ],
     },
     {
       label: 'Resultados',
+      icon: 'pi pi-crown',
       items: [
         {
-          label: 'Cadastrar resultados',
-          icon: 'pi pi-plus-circle',
+          label: 'Cadastrar',
         },
       ],
     },
     {
       label: 'Relatórios',
+      icon: 'pi pi-chart-bar',
       items: [
         {
-          label: 'Relatório de inscrições',
-          icon: 'pi pi-chart-bar',
+          label: 'Inscrições',
         },
         {
-          label: 'Relatório de resultados',
-          icon: 'pi pi-chart-bar',
+          label: 'Resultados',
         },
       ],
     },
@@ -59,8 +58,15 @@
 </script>
 
 <template>
-  <div class="fixed flex flex-col items-center w-70 h-full top-0 p-4 pt-19 bg-linear-to-b from-surface-50 to-surface-200 border border-surface-200">
-    <img src="/logo.png" />
-    <PanelMenu :model="items" class="w-full" />
-  </div>
+  <Panel header="Acessar" class="flex flex-col h-full items-center !bg-linear-to-b from-surface-0 to-surface-50">
+    <PanelMenu :model="items" multiple class="w-full">
+      <template #item="{ item }">
+        <a v-ripple class="flex items-center gap-2 px-4 py-2 cursor-pointer group">
+          <span v-if="item.icon" :class="item.icon" />
+          <span>{{ item.label }}</span>
+          <span v-if="item.items" class="pi pi-angle-down ml-auto" />
+        </a>
+      </template>
+    </PanelMenu>
+  </Panel>
 </template>

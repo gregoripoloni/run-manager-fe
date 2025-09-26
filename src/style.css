@@ -3,8 +3,9 @@
 @import "primeicons/primeicons.css";
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  font-family: Poppins, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1;
+  font-size: 14px;
   font-weight: 400;
 
   font-synthesis: none;
@@ -18,4 +19,18 @@ body,
 #app {
   height: 100%;
   margin: 0;
+}
+
+@layer theme {
+  :root {
+    --p-panelmenu-submenu-indent: 1.5rem !important;
+  }
+}
+
+@layer components {
+  .p-panelmenu-panel {
+    padding: 0 !important;
+    background-color: transparent !important;
+    border: none !important;
+  }
 }

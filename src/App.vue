@@ -6,9 +6,9 @@
 <template>
   <Menu />
   <div class="flex h-full pt-15">
-    <Sidebar />
-    <main class="flex items-center justify-center w-full min-h-full p-10 pl-80">
-      <RouterView />
+    <main class="grid grid-cols-4 gap-10 items-center justify-center w-full min-h-full p-10">
+      <Sidebar class="col-span-1" />
+      <RouterView class="col-span-3" />
     </main>
   </div>
 </template>
