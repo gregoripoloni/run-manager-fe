@@ -2,16 +2,16 @@
   import { ref } from "vue";
   import Panel from "primevue/panel";
   import PanelMenu from "primevue/panelmenu";
-  import { useRouter } from 'vue-router'
+  import { useRouter } from 'vue-router';
 
-  const router = useRouter()
+  const router = useRouter();
 
   const items = ref([
     {
       label: 'Início',
       icon: 'pi pi-home',
       command: () => {
-        router.push('/')
+        router.push('/');
       }
     },
     {
@@ -21,7 +21,7 @@
         {
           label: 'Cadastrar',
           command: () => {
-            router.push('/events/add')
+            router.push('/events/add');
           }
         },
         {
@@ -53,6 +53,10 @@
     {
       label: 'Sair',
       icon: 'pi pi-sign-out',
+      command: () => {
+        localStorage.removeItem('jwt');
+        router.push('/login');
+      }
     },
   ]);
 </script>
