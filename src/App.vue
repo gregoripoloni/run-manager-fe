@@ -1,14 +1,19 @@
 <script setup lang="ts">
   import { computed } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import Menu from './components/Menu.vue'
   import Sidebar from './components/Sidebar.vue';
 
   const route = useRoute();
+  const router = useRouter();
 
   const inUnauthenticatedRoutes = computed(() => {
-    return ['/login', '/signin'].includes(route.path);
+    return ['/login', '/register'].includes(route.path);
   });
+
+  if (!localStorage.getItem('jwt')) {
+    router.push('/login');
+  }
 </script>
 
 <template>

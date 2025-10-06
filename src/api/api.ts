@@ -18,7 +18,11 @@ export const get = async (path: string) => {
     credentials: 'include',
   });
 
-  return response;
+  if (!response.ok) {
+    return { errors: await response.json() };
+  }
+
+  return { data: await response.json() };
 }
 
 export const post = async (path: string, body: object) => {
@@ -40,5 +44,9 @@ export const post = async (path: string, body: object) => {
     credentials: 'include',
   });
 
-  return response;
+  if (!response.ok) {
+    return { errors: await response.json() };
+  }
+
+  return { data: await response.json() };
 }
