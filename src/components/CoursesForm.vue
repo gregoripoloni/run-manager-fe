@@ -100,7 +100,7 @@
           </div>
         </template>
       </Panel>
-      <div v-if="!isAdding" class="flex flex-col gap-4">
+      <div v-if="!isAdding" class="flex flex-col">
         <Button label="Adicionar percurso" icon="pi pi-plus" @click="addCourse" />
       </div>
     </div>

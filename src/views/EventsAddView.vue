@@ -3,7 +3,7 @@
   import InputText from 'primevue/inputtext';
   import Datepicker from 'primevue/datepicker';
   import Button from 'primevue/button';
-  import Form from '../components/Form.vue';
+  import MainPanel from '../components/MainPanel.vue';
   import CoursesForm from '../components/CoursesForm.vue';
   import type { Course } from '../types/course.types';
 
@@ -18,7 +18,7 @@
 </script>
 
 <template>
-  <Form title="Cadastrar eventos">
+  <MainPanel title="Cadastrar eventos">
     <div class="flex flex-col gap-4">
       <div class="flex flex-col gap-2">
         <label for="name">Nome do evento</label>
@@ -39,5 +39,5 @@
         <Button label="Salvar" icon="pi pi-check" />
       </div>
     </template>
-  </Form>
+  </MainPanel>
 </template>

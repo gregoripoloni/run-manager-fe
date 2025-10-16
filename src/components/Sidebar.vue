@@ -26,6 +26,9 @@
         },
         {
           label: 'Consultar',
+          command: () => {
+            router.push('/events');
+          }
         },
       ],
     },
