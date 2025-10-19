@@ -1,6 +1,7 @@
 export interface Course {
-  place: string;
-  distance: string;
+  location: string;
+  startTime?: string,
+  distanceKm: number;
   category: string;
   slots: number;
 }

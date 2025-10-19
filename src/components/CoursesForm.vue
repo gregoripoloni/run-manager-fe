@@ -2,6 +2,7 @@
   import { ref, reactive } from 'vue';
   import Panel from 'primevue/panel';
   import InputText from 'primevue/inputtext';
+  import Datepicker from 'primevue/datepicker';
   import Button from 'primevue/button';
   import type { Course } from '../types/course.types';
 
@@ -10,8 +11,9 @@
   }>();
 
   const isAdding = ref(false);
-  const place = ref('');
-  const distance = ref('');
+  const location = ref('');
+  const startTime = ref(new Date());
+  const distanceKm = ref('');
   const category = ref('');
   const slots = ref('');
 
@@ -25,8 +27,9 @@
     isAdding.value = false;
 
     const course = {
-      place: place.value,
-      distance: distance.value,
+      location: location.value,
+      startTime: startTime.value.toLocaleTimeString('pt-BR', { hour12: false }),
+      distanceKm: parseInt(distanceKm.value),
       category: category.value,
       slots: parseInt(slots.value),
     };
@@ -44,8 +47,9 @@
   }
 
   const clearForm = () => {
-    place.value = '';
-    distance.value = '';
+    location.value = '';
+    startTime.value = new Date();
+    distanceKm.value = '';
     category.value = '';
     slots.value = '';
   }
@@ -54,35 +58,47 @@
 <template>
   <Panel class="courses-form-main-panel">
     <div class=" flex flex-col gap-2">
-      <Panel v-for="course in courses" :header="course.place" toggleable collapsed>
+      <Panel v-for="course in courses" :header="course.location" toggleable collapsed>
         <div class="grid grid-cols-2 gap-4">
           <div class="flex flex-col gap-2">
             <label>Local de partida</label>
-            <InputText :value="course.place" disabled />
+            <InputText :value="course.location" readonly />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label>Horário de largada</label>
+            <InputText :value="course.startTime" readonly />
           </div>
           <div class="flex flex-col gap-2">
             <label>Distância</label>
-            <InputText :value="course.distance" disabled />
+            <InputText :value="course.distanceKm" readonly />
           </div>
           <div class="flex flex-col gap-2">
             <label>Categoria</label>
-            <InputText :value="course.category" disabled />
+            <InputText :value="course.category" readonly />
           </div>
           <div class="flex flex-col gap-2">
             <label>Vagas</label>
-            <InputText :value="course.slots" disabled />
+            <InputText :value="course.slots" readonly />
           </div>
         </div>
       </Panel>
       <Panel v-if="isAdding" header="Novo percurso">
         <div class="grid grid-cols-2 gap-4">
           <div class="flex flex-col gap-2">
-            <label for="place">Local de partida</label>
-            <InputText id="place" v-model="place" />
+            <label for="location">Local de partida</label>
+            <InputText id="location" v-model="location" />
           </div>
           <div class="flex flex-col gap-2">
-            <label for="distance">Distância</label>
-            <InputText id="distance" v-model="distance" />
+            <label for="startTime">Horário de largada</label>
+            <Datepicker id="startTime" v-model="startTime" showIcon iconDisplay="input" timeOnly>
+              <template #inputicon="slotProps">
+                <i class="pi pi-clock" @click="slotProps.clickCallback" />
+              </template>
+            </Datepicker>
+          </div>
+          <div class="flex flex-col gap-2">
+            <label for="distanceKm">Distância (Km)</label>
+            <InputText id="distanceKm" type="number" v-model="distanceKm" />
           </div>
           <div class="flex flex-col gap-2">
             <label for="category">Categoria</label>

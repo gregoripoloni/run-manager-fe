@@ -1,37 +1,29 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { onMounted, ref } from 'vue';
   import Panel from 'primevue/panel';
   import Button from 'primevue/button';
   import MainPanel from '../components/MainPanel.vue';
+  import { getEventsByOrganizer } from '../api/events';
 
-  const events = ref([
-    {
-      name: 'Maratona 1',
-      date: '20/10/2025',
-    },
-    {
-      name: 'Maratona 2',
-      date: '20/10/2025',
-    },
-    {
-      name: 'Maratona 3',
-      date: '20/10/2025',
-    },
-    {
-      name: 'Maratona 4',
-      date: '20/10/2025',
-    },
-    {
-      name: 'Maratona 5',
-      date: '20/10/2025',
+  const events = ref<{
+    id: number;
+    name: string;
+    date: string;
+  }[]>([]);
+
+  onMounted(async () => {
+    const response = await getEventsByOrganizer();
+
+    if (response.data) {
+      events.value = response.data;
     }
-  ]);
+  });
 </script>
 
 <template>
   <MainPanel title="Eventos">
     <div class="grid grid-cols-3 gap-4">
-      <Panel v-for="event in events" :header="event.name">
+      <Panel v-for="event in events" :key="event.id" :header="event.name">
         {{ event.date }}
         <template #footer>
           <div class="flex flex-col">
