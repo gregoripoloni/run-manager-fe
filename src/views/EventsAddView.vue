@@ -32,7 +32,6 @@
         await saveCourse({
           ...course,
           eventId: response.data.id,
-          startTime: '00:00:00',
         });
       }
 
@@ -51,7 +50,7 @@
         </div>
         <div class="flex flex-col gap-2">
           <label for="date">Data do evento</label>
-          <Datepicker id="date" v-model="date" showIcon iconDisplay="input" />
+          <Datepicker id="date" v-model="date" dateFormat="dd/mm/y" showIcon iconDisplay="input" />
         </div>
       </div>
       <div class="flex flex-col gap-2">

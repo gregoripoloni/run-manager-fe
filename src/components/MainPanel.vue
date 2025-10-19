@@ -7,7 +7,7 @@
 </script>
 
 <template>
-  <Panel :header="title" class="h-full w-full !bg-linear-to-b from-surface-0 to-surface-50">
+  <Panel :header="title" class="h-full max-h-full w-full overflow-y-auto !rounded-none !border-none p-10">
     <slot></slot>
     <template #footer>
       <slot name="footer"></slot>

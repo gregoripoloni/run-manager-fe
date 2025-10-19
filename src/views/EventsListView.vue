@@ -16,6 +16,11 @@
 
     if (response.data) {
       events.value = response.data;
+      events.value = events.value.map((event) => {
+        const [ano, mes, dia] = event.date.split("-");
+        event.date = `${dia}/${mes}/${ano.slice(2)}`;
+        return event;
+      });
     }
   });
 </script>
