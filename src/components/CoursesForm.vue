@@ -3,8 +3,8 @@
   import Panel from 'primevue/panel';
   import InputText from 'primevue/inputtext';
   import Datepicker from 'primevue/datepicker';
-  import Message from 'primevue/message';
   import Button from 'primevue/button';
+  import FormField from './FormField.vue';
   import { useFormFields } from '../composables/useFormFields';
   import type { Course } from '../types/course.types';
 
@@ -60,6 +60,7 @@
         isValid = false;
       } else {
         field.error = false;
+        field.errorMessage = '';
       }
     }
 
@@ -101,45 +102,48 @@
       </Panel>
       <Panel v-if="isAdding" header="Novo percurso">
         <div class="grid grid-cols-2 gap-4">
-          <div class="flex flex-col gap-2">
-            <label for="location">Local de partida</label>
-            <InputText id="location" v-model="form.location.value" :invalid="form.location.error" />
-            <Message v-if="form.location.error" severity="error" size="small" variant="simple">
-              {{ form.location.errorMessage }}
-            </Message>
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="startTime">Horário de largada</label>
-            <Datepicker id="startTime" v-model="form.startTime.value" showIcon iconDisplay="input" timeOnly :invalid="form.startTime.error">
+          <FormField
+            label="Local de partida"
+            v-model="form.location.value"
+            :invalid="form.location.error"
+            :error-message="form.location.errorMessage"
+          />
+          <FormField
+            label="Horário de largada"
+            :error-message="form.startTime.errorMessage"
+          >
+            <Datepicker
+              v-model="form.startTime.value"
+              showIcon
+              iconDisplay="input"
+              timeOnly
+              :invalid="form.startTime.error"
+            >
               <template #inputicon="slotProps">
                 <i class="pi pi-clock" @click="slotProps.clickCallback" />
               </template>
             </Datepicker>
-            <Message v-if="form.startTime.error" severity="error" size="small" variant="simple">
-              {{ form.startTime.errorMessage }}
-            </Message>
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="distanceKm">Distância (Km)</label>
-            <InputText id="distanceKm" type="number" v-model="form.distanceKm.value" :invalid="form.distanceKm.error" />
-            <Message v-if="form.distanceKm.error" severity="error" size="small" variant="simple">
-              {{ form.distanceKm.errorMessage }}
-            </Message>
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="category">Categoria</label>
-            <InputText id="category" v-model="form.category.value" :invalid="form.category.error" />
-            <Message v-if="form.category.error" severity="error" size="small" variant="simple">
-              {{ form.category.errorMessage }}
-            </Message>
-          </div>
-          <div class="flex flex-col gap-2">
-            <label for="slots">Vagas</label>
-            <InputText id="slots" type="number" v-model="form.slots.value" :invalid="form.slots.error" />
-            <Message v-if="form.slots.error" severity="error" size="small" variant="simple">
-              {{ form.slots.errorMessage }}
-            </Message>
-          </div>
+          </FormField>
+          <FormField
+            label="Distância (Km)"
+            type="number"
+            v-model="form.distanceKm.value"
+            :invalid="form.distanceKm.error"
+            :error-message="form.distanceKm.errorMessage"
+          />
+          <FormField
+            label="Categoria"
+            v-model="form.category.value"
+            :invalid="form.category.error"
+            :error-message="form.category.errorMessage"
+          />
+          <FormField
+            label="Vagas"
+            type="number"
+            v-model="form.slots.value"
+            :invalid="form.slots.error"
+            :error-message="form.slots.errorMessage"
+          />
         </div>
         <template #footer>
           <div class="flex gap-4 w-full justify-end">

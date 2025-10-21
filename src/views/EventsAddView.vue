@@ -1,11 +1,10 @@
 <script setup lang="ts">
   import { reactive } from 'vue';
   import { useRouter } from 'vue-router';
-  import InputText from 'primevue/inputtext';
   import Datepicker from 'primevue/datepicker';
-  import Message from 'primevue/message';
   import Button from 'primevue/button';
   import MainPanel from '../components/MainPanel.vue';
+  import FormField from '../components/FormField.vue';
   import CoursesForm from '../components/CoursesForm.vue';
   import { useFormFields } from '../composables/useFormFields';
   import { saveEvent } from '../api/events';
@@ -68,20 +67,23 @@
   <MainPanel title="Cadastrar eventos">
     <div class="flex flex-col gap-4">
       <div class="grid grid-cols-2 gap-4">
-        <div class="flex flex-col gap-2">
-          <label for="name">Nome do evento</label>
-          <InputText id="name" v-model="form.name.value" :invalid="form.name.error" />
-          <Message v-if="form.name.error" severity="error" size="small" variant="simple">
-            {{ form.name.errorMessage }}
-          </Message>
-        </div>
-        <div class="flex flex-col gap-2">
-          <label for="date">Data do evento</label>
-          <Datepicker id="date" v-model="form.date.value" dateFormat="dd/mm/y" showIcon iconDisplay="input" :invalid="form.date.error" />
-          <Message v-if="form.date.error" severity="error" size="small" variant="simple">
-            {{ form.date.errorMessage }}
-          </Message>
-        </div>
+        <FormField
+          label="Nome do evento"
+          v-model="form.name.value"
+          :invalid="form.name.error"
+          :error-message="form.name.errorMessage"
+        />
+        <FormField
+          label="Data do evento"
+          :error-message="form.date.errorMessage"
+        >
+          <Datepicker
+            v-model="form.date.value"
+            dateFormat="dd/mm/y"
+            showIcon iconDisplay="input"
+            :invalid="form.date.error"
+          />
+        </FormField>
       </div>
       <div class="flex flex-col gap-2">
         <label for="date">Percursos</label>
