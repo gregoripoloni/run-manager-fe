@@ -21,6 +21,7 @@
         event.date = `${dia}/${mes}/${ano.slice(2)}`;
         return event;
       });
+      events.value = events.value.sort((a, b) => a.id - b.id);
     }
   });
 </script>
