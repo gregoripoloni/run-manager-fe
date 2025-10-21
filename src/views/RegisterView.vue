@@ -1,41 +1,23 @@
 <script setup lang="ts">
-  import { ref, reactive } from 'vue';
+  import { ref } from 'vue';
+  import { useRouter } from 'vue-router';
   import Avatar from 'primevue/avatar';
-  import InputText from 'primevue/inputtext';
   import Password from 'primevue/password';
   import Select from 'primevue/select';
-  import Message from 'primevue/message';
   import Button from 'primevue/button';
-  import { useRouter } from 'vue-router';
+  import FormField from '../components/FormField.vue';
+  import { useFormFields } from '../composables/useFormFields';
   import { registerOrganizer } from '../api/auth';
 
   const router = useRouter();
 
-  const form = reactive({
-    name: {
-      value: '',
-      error: false,
-      errorMessage: '',
-    },
-    email: {
-      value: '',
-      error: false,
-      errorMessage: '',
-    },
-    password: {
-      value: '',
-      error: false,
-      errorMessage: '',
-    },
-    phone: {
-      value: '',
-    },
-    role: {
-      value: 'ORGANIZER' as 'ORGANIZER' | 'ATHLETE',
-    },
-    organization: {
-      value: '',
-    },
+  const { form, setFieldError, clearFieldError } = useFormFields({
+    name: '',
+    email: '',
+    password: '',
+    phone: '',
+    role: 'ORGANIZER' as 'ORGANIZER' | 'ATHLETE',
+    organization: '',
   });
 
   const roles = ref([
@@ -55,27 +37,21 @@
 
     if (response.errors) {
       if (response.errors.name) {
-        form.name.error = true;
-        form.name.errorMessage = response.errors.name;
+        setFieldError('name', response.errors.name);
       } else {
-        form.name.error = false;
-        form.name.errorMessage = '';
+        clearFieldError('name');
       }
 
       if (response.errors.email) {
-        form.email.error = true;
-        form.email.errorMessage = response.errors.email;
+        setFieldError('email', response.errors.email);
       } else {
-        form.email.error = false;
-        form.email.errorMessage = '';
+        clearFieldError('email');
       }
 
       if (response.errors.password) {
-        form.password.error = true;
-        form.password.errorMessage = response.errors.password;
+        setFieldError('password', response.errors.password);
       } else {
-        form.password.error = false;
-        form.password.errorMessage = '';
+        clearFieldError('password');
       }
 
       return;
@@ -92,33 +68,50 @@
     <form class="flex flex-col items-center justify-center gap-4 w-1/2" onsubmit="return false;">
       <Avatar image="/user.jpg" shape="circle" class="!h-20 !w-20" />
       <label>Cadastrar-se</label>
-      <div class="flex flex-col gap-1 w-full">
-          <InputText v-model="form.name.value" placeholder="Nome" :invalid="form.name.error" />
-          <Message v-if="form.name.error" severity="error" size="small" variant="simple">
-            {{ form.name.errorMessage }}
-          </Message>
-      </div>
-      <div class="flex flex-col gap-1 w-full">
-          <InputText v-model="form.email.value" placeholder="Email" :invalid="form.email.error" />
-          <Message v-if="form.email.error" severity="error" size="small" variant="simple">
-            {{ form.email.errorMessage }}
-          </Message>
-      </div>
-      <div class="flex flex-col gap-1 w-full">
-          <InputText v-model="form.phone.value" placeholder="Telefone" />
-      </div>
-      <div class="flex flex-col gap-1 w-full">
-          <Password v-model="form.password.value" placeholder="Senha" :feedback="false" :invalid="form.password.error" fluid />
-          <Message v-if="form.password.error" severity="error" size="small" variant="simple">
-            {{ form.password.errorMessage }}
-          </Message>
-      </div>
-      <div class="flex flex-col gap-1 w-full">
-          <Select v-model="form.role.value" :options="roles" optionLabel="name" optionValue="code" placeholder="Papel" class="w-full" />
-      </div>
-      <div v-if="form.role.value === 'ORGANIZER'" class="flex flex-col gap-1 w-full">
-          <InputText v-model="form.organization.value" placeholder="Organização" />
-      </div>
+      <FormField
+        v-model="form.name.value"
+        placeholder="Nome"
+        :invalid="form.name.error"
+        :errorMessage="form.name.errorMessage"
+        class="w-full"
+      />
+      <FormField
+        v-model="form.email.value"
+        placeholder="Email"
+        :invalid="form.email.error"
+        :errorMessage="form.email.errorMessage"
+        class="w-full"
+      />
+      <FormField
+        v-model="form.phone.value"
+        placeholder="Telefone"
+        class="w-full"
+      />
+      <FormField :errorMessage="form.password.errorMessage" class="w-full">
+        <Password
+          v-model="form.password.value"
+          placeholder="Senha"
+          :feedback="false"
+          :invalid="form.password.error"
+          fluid
+        />
+      </FormField>
+      <FormField class="w-full">
+        <Select
+          v-model="form.role.value"
+          :options="roles"
+          optionLabel="name"
+          optionValue="code"
+          placeholder="Papel"
+          class="w-full"
+        />
+      </FormField>
+      <FormField
+        v-if="form.role.value === 'ORGANIZER'"
+        v-model="form.organization.value"
+        placeholder="Organização"
+        class="w-full"
+      />
       <Button type="submit" @click="logIn" class="w-full">Cadastrar</Button>
       <Button variant="link" @click="router.push('/login')">Entrar</Button>
     </form>

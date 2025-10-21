@@ -7,6 +7,7 @@
     id?: string;
     label?: string;
     type?: 'text' | 'number' | 'email' | 'password';
+    placeholder?: string;
     invalid?: boolean;
     errorMessage?: string;
   }>(), {
@@ -15,14 +16,14 @@
 
   const model = defineModel<string>();
 
-  const getId = computed(() => props.id || useId());
+  const id = computed(() => props.id || useId());
 </script>
 
 <template>
   <div class="flex flex-col gap-2">
-    <label v-id="label" :for="getId">{{ label }}</label>
+    <label v-if="label" :for="id">{{ label }}</label>
     <slot>
-      <InputText :id="getId" :type="type" v-model="model" :invalid="invalid" />
+      <InputText v-model="model" :id="id" :type="type" :placeholder="placeholder" :invalid="invalid" />
     </slot>
     <Message v-if="errorMessage" severity="error" size="small" variant="simple">
       {{ errorMessage }}

@@ -1,26 +1,17 @@
 <script setup lang="ts">
-  import { reactive } from 'vue';
-  import Avatar from 'primevue/avatar';
-  import InputText from 'primevue/inputtext';
-  import Password from 'primevue/password';
-  import Message from 'primevue/message';
-  import Button from 'primevue/button';
   import { useRouter } from 'vue-router';
+  import Avatar from 'primevue/avatar';
+  import Password from 'primevue/password';
+  import Button from 'primevue/button';
+  import FormField from '../components/FormField.vue';
+  import { useFormFields } from '../composables/useFormFields';
   import { loginOrganizer } from '../api/auth';
 
   const router = useRouter();
 
-  const form = reactive({
-    email: {
-      value: '',
-      error: false,
-      errorMessage: '',
-    },
-    password: {
-      value: '',
-      error: false,
-      errorMessage: '',
-    },
+  const { form, setFieldError, clearFieldError } = useFormFields({
+    email: '',
+    password: '',
   });
 
   const logIn = async () => {
@@ -31,19 +22,15 @@
 
     if (response.errors) {
       if (response.errors.email) {
-        form.email.error = true;
-        form.email.errorMessage = response.errors.email;
+        setFieldError('email', response.errors.email)
       } else {
-        form.email.error = false;
-        form.email.errorMessage = '';
+        clearFieldError('email');
       }
 
       if (response.errors.password) {
-        form.password.error = true;
-        form.password.errorMessage = response.errors.password;
+        setFieldError('password', response.errors.password);
       } else {
-        form.password.error = false;
-        form.password.errorMessage = '';
+        clearFieldError('password');
       }
 
       return;
@@ -60,18 +47,22 @@
     <form class="flex flex-col items-center justify-center gap-4 w-1/2" onsubmit="return false;">
       <Avatar image="/user.jpg" shape="circle" class="!h-20 !w-20" />
       <label>Iniciar sessão</label>
-      <div class="flex flex-col gap-1 w-full">
-          <InputText v-model="form.email.value" placeholder="Email" :invalid="form.email.error" />
-          <Message v-if="form.email.error" severity="error" size="small" variant="simple">
-            {{ form.email.errorMessage }}
-          </Message>
-      </div>
-      <div class="flex flex-col gap-1 w-full">
-          <Password v-model="form.password.value" placeholder="Senha" :feedback="false" :invalid="form.password.error" fluid />
-          <Message v-if="form.password.error" severity="error" size="small" variant="simple">
-            {{ form.password.errorMessage }}
-          </Message>
-      </div>
+      <FormField
+        v-model="form.email.value"
+        placeholder="Email"
+        :invalid="form.email.error"
+        :error-message="form.email.errorMessage"
+        class="w-full"
+      />
+      <FormField :error-message="form.password.errorMessage" class="w-full">
+        <Password
+          v-model="form.password.value"
+          placeholder="Senha"
+          :feedback="false"
+          :invalid="form.password.error"
+          fluid
+        />
+      </FormField>
       <Button type="submit" @click="logIn" class="w-full">Entrar</Button>
       <Button variant="link" @click="router.push('/register')">Cadastrar-se</Button>
     </form>
