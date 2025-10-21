@@ -144,7 +144,7 @@
         <template #footer>
           <div class="flex gap-4 w-full justify-end">
             <Button label="Cancelar" severity="secondary" @click="cancelCourse" />
-            <Button label="Salvar" icon="pi pi-check" @click="saveCourse" />
+            <Button label="Adicionar" icon="pi pi-check" @click="saveCourse" />
           </div>
         </template>
       </Panel>
