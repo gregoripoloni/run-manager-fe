@@ -3,7 +3,9 @@
   import Panel from 'primevue/panel';
   import InputText from 'primevue/inputtext';
   import Datepicker from 'primevue/datepicker';
+  import Message from 'primevue/message';
   import Button from 'primevue/button';
+  import { useFormFields } from '../composables/useFormFields';
   import type { Course } from '../types/course.types';
 
   const emit = defineEmits<{
@@ -11,11 +13,14 @@
   }>();
 
   const isAdding = ref(false);
-  const location = ref('');
-  const startTime = ref(new Date());
-  const distanceKm = ref('');
-  const category = ref('');
-  const slots = ref('');
+
+  const { form, resetForm } = useFormFields({
+    location: '',
+    startTime: new Date(),
+    distanceKm: '',
+    category: '',
+    slots: '',
+  });
 
   const courses = reactive<Course[]>([]);
 
@@ -24,34 +29,46 @@
   }
 
   const saveCourse = () => {
+    if (!validateCourse()) {
+      return;
+    }
+
     isAdding.value = false;
 
     const course = {
-      location: location.value,
-      startTime: startTime.value.toLocaleTimeString('pt-BR', { hour12: false }),
-      distanceKm: parseInt(distanceKm.value),
-      category: category.value,
-      slots: parseInt(slots.value),
+      location: form.location.value,
+      startTime: form.startTime.value.toLocaleTimeString('pt-BR', { hour12: false }),
+      distanceKm: parseInt(form.distanceKm.value),
+      category: form.category.value,
+      slots: parseInt(form.slots.value),
     };
 
     courses.push(course);
 
     emit('addCourse', course);
 
-    clearForm();
+    resetForm();
+  }
+
+  const validateCourse = () => {
+    let isValid = true;
+
+    for (const field of Object.values(form)) {
+      if (!field.value) {
+        field.error = true;
+        field.errorMessage = 'não deve estar em branco';
+        isValid = false;
+      } else {
+        field.error = false;
+      }
+    }
+
+    return isValid;
   }
 
   const cancelCourse = () => {
     isAdding.value = false;
-    clearForm();
-  }
-
-  const clearForm = () => {
-    location.value = '';
-    startTime.value = new Date();
-    distanceKm.value = '';
-    category.value = '';
-    slots.value = '';
+    resetForm();
   }
 </script>
 
@@ -86,27 +103,42 @@
         <div class="grid grid-cols-2 gap-4">
           <div class="flex flex-col gap-2">
             <label for="location">Local de partida</label>
-            <InputText id="location" v-model="location" />
+            <InputText id="location" v-model="form.location.value" :invalid="form.location.error" />
+            <Message v-if="form.location.error" severity="error" size="small" variant="simple">
+              {{ form.location.errorMessage }}
+            </Message>
           </div>
           <div class="flex flex-col gap-2">
             <label for="startTime">Horário de largada</label>
-            <Datepicker id="startTime" v-model="startTime" showIcon iconDisplay="input" timeOnly>
+            <Datepicker id="startTime" v-model="form.startTime.value" showIcon iconDisplay="input" timeOnly :invalid="form.startTime.error">
               <template #inputicon="slotProps">
                 <i class="pi pi-clock" @click="slotProps.clickCallback" />
               </template>
             </Datepicker>
+            <Message v-if="form.startTime.error" severity="error" size="small" variant="simple">
+              {{ form.startTime.errorMessage }}
+            </Message>
           </div>
           <div class="flex flex-col gap-2">
             <label for="distanceKm">Distância (Km)</label>
-            <InputText id="distanceKm" type="number" v-model="distanceKm" />
+            <InputText id="distanceKm" type="number" v-model="form.distanceKm.value" :invalid="form.distanceKm.error" />
+            <Message v-if="form.distanceKm.error" severity="error" size="small" variant="simple">
+              {{ form.distanceKm.errorMessage }}
+            </Message>
           </div>
           <div class="flex flex-col gap-2">
             <label for="category">Categoria</label>
-            <InputText id="category" v-model="category" />
+            <InputText id="category" v-model="form.category.value" :invalid="form.category.error" />
+            <Message v-if="form.category.error" severity="error" size="small" variant="simple">
+              {{ form.category.errorMessage }}
+            </Message>
           </div>
           <div class="flex flex-col gap-2">
             <label for="slots">Vagas</label>
-            <InputText id="slots" type="number" v-model="slots" />
+            <InputText id="slots" type="number" v-model="form.slots.value" :invalid="form.slots.error" />
+            <Message v-if="form.slots.error" severity="error" size="small" variant="simple">
+              {{ form.slots.errorMessage }}
+            </Message>
           </div>
         </div>
         <template #footer>
