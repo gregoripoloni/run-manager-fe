@@ -22,6 +22,12 @@
     router.push('/login');
   }
 
+  const localStorageUser = localStorage.getItem('user');
+
+  if (localStorageUser) {
+    updateUser(JSON.parse(localStorageUser));
+  }
+
   provide(userKey, { user, updateUser });
 </script>
 

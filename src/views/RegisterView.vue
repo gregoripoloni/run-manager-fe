@@ -67,14 +67,17 @@
     }
 
     if (response.data) {
-      updateUser({
+      const user = {
         userId: response.data.userId,
         name: response.data.name,
         email: response.data.email,
         role: response.data.role,
-      });
+      };
 
-      localStorage.setItem('jwt', response.data?.token ?? '');
+      updateUser(user);
+
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('jwt', response.data.token);
 
       router.push('/');
     }

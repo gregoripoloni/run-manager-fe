@@ -58,6 +58,7 @@
       icon: 'pi pi-sign-out',
       command: () => {
         localStorage.removeItem('jwt');
+        localStorage.removeItem('user');
         router.push('/login');
       }
     },
