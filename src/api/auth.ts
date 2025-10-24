@@ -15,7 +15,7 @@ interface RegisterResponse {
     token: string;
     name: string;
     email: string;
-    role: string;
+    role: 'ORGANIZER' | 'ATHLETE';
   };
   errors?: {
     name: string;
@@ -39,7 +39,7 @@ interface LoginResponse {
     token: string;
     name: string;
     email: string;
-    role: string;
+    role: 'ORGANIZER' | 'ATHLETE';
   };
   errors?: {
     email: string;

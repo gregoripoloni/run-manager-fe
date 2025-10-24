@@ -1,9 +1,18 @@
 <script setup lang="ts">
-  import { onMounted, ref } from 'vue';
+  import { ref, onMounted, inject } from 'vue';
   import Panel from 'primevue/panel';
   import Button from 'primevue/button';
   import MainPanel from '../components/MainPanel.vue';
-  import { getEventsByOrganizer } from '../api/events';
+  import { getEventsByOrganizer, getFutureEvents } from '../api/events';
+  import { userKey } from '../context/user';
+
+  const userContext = inject(userKey);
+
+  if (!userContext) {
+    throw new Error('User context not provided!');
+  }
+
+  const { user } = userContext;
 
   const events = ref<{
     id: number;
@@ -12,7 +21,15 @@
   }[]>([]);
 
   onMounted(async () => {
-    const response = await getEventsByOrganizer();
+    let getEvents;
+
+    if (user.value?.role === 'ORGANIZER') {
+      getEvents = getEventsByOrganizer;
+    } else {
+      getEvents = getFutureEvents;
+    }
+
+    const response = await getEvents();
 
     if (response.data) {
       events.value = response.data;

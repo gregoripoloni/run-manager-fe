@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { inject } from 'vue';
   import { useRouter } from 'vue-router';
   import Avatar from 'primevue/avatar';
   import Password from 'primevue/password';
@@ -6,8 +7,17 @@
   import FormField from '../components/FormField.vue';
   import { useFormFields } from '../composables/useFormFields';
   import { loginOrganizer } from '../api/auth';
+  import { userKey } from '../context/user';
 
   const router = useRouter();
+
+  const userContext = inject(userKey);
+
+  if (!userContext) {
+    throw new Error('User context not provided!');
+  }
+
+  const { updateUser } = userContext;
 
   const { form, setFieldError, clearFieldError } = useFormFields({
     email: '',
@@ -36,9 +46,18 @@
       return;
     }
 
-    localStorage.setItem('jwt', response.data?.token ?? '');
+    if (response.data) {
+      updateUser({
+        userId: response.data.userId,
+        name: response.data.name,
+        email: response.data.email,
+        role: response.data.role,
+      });
 
-    router.push('/');
+      localStorage.setItem('jwt', response.data?.token ?? '');
+
+      router.push('/');
+    }
   }
 </script>
 

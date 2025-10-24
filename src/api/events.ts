@@ -21,3 +21,7 @@ interface GetEventsResponse {
 export const getEventsByOrganizer = async (): Promise<GetEventsResponse> => {
   return get('/events-organizer/');
 }
+
+export const getFutureEvents = async (): Promise<GetEventsResponse> => {
+  return get('/events');
+}
