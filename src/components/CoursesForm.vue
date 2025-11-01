@@ -76,7 +76,7 @@
 <template>
   <Panel class="courses-form-main-panel">
     <div class=" flex flex-col gap-2">
-      <Panel v-for="course in courses" :header="course.location" toggleable collapsed>
+      <Panel v-for="(course, index) in courses" :header="`Percurso ${index + 1}`" toggleable collapsed>
         <div class="grid grid-cols-2 gap-4">
           <div class="flex flex-col gap-2">
             <label>Local de partida</label>

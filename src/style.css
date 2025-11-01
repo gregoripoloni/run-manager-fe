@@ -33,4 +33,8 @@ body,
     background-color: transparent !important;
     border: none !important;
   }
+
+  .p-select-label {
+    line-height: 1.5rem;
+  }
 }

@@ -59,7 +59,7 @@
   }
 
   const cancelEvent = () => {
-    router.back();
+    router.push('/events');
   }
 </script>
 

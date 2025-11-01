@@ -17,20 +17,9 @@
     {
       label: 'Eventos',
       icon: 'pi pi-calendar',
-      items: [
-        {
-          label: 'Cadastrar',
-          command: () => {
-            router.push('/events/add');
-          }
-        },
-        {
-          label: 'Consultar',
-          command: () => {
-            router.push('/events');
-          }
-        },
-      ],
+      command: () => {
+        router.push('/events');
+      },
     },
     {
       label: 'Resultados',
