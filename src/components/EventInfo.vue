@@ -1,11 +1,20 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
+  import { ref, watch, inject } from 'vue';
   import Dialog from 'primevue/dialog';
-  import Panel from 'primevue/panel';
-  import Button from 'primevue/button';
   import { getCoursesByEvent } from '../api/courses';
+  import CourseCard from './CourseCard.vue';
   import type { Event } from '../types/event.types';
   import type { Course } from '../types/course.types';
+  import { userKey } from '../context/user';
+  import { saveRegistration } from '../api/registrations';
+
+  const userContext = inject(userKey);
+
+  if (!userContext) {
+    throw new Error('User context not provided!');
+  }
+
+  const { user } = userContext;
 
   const visible = defineModel<boolean>('visible');
 
@@ -20,17 +29,25 @@
       return;
     }
 
-    // const response = await getCoursesByEvent(props.event.id);
-
-    const response = {
-      data: [
-        { location: 'Centro', startTime: '22:00', distanceKm: 10, category: 'Maratona', slots: 100 },
-        { location: 'Centro', startTime: '22:00', distanceKm: 10, category: 'Maratona', slots: 100 },
-      ],
-    };
+    const response = await getCoursesByEvent(props.event.id);
 
     if (response.data) {
       courses.value = response.data;
+    }
+  }
+
+  const subscribe = async (courseId: number | undefined) => {
+    if (!courseId) return;
+
+    const response = await saveRegistration({ courseId: courseId });
+
+    if (response.errors) {
+      alert('error');
+      return;
+    }
+
+    if (response.data) {
+      alert('success');
     }
   }
 
@@ -41,18 +58,13 @@
   <Dialog v-model:visible="visible" modal :header="event?.name" :style="{ width: '50rem' }">
     <div class="flex flex-col gap-4">
       <span>Data: {{ event?.date }}</span>
-      <Panel v-for="(course, index) in courses" :header="`Percurso ${index + 1}`">
-        <div class="flex flex-col gap-4">
-          <div class="grid grid-cols-3 gap-4">
-            <span>Local de partida: {{ course.location }}</span>
-            <span>Distância: {{ course.distanceKm }} km</span>
-            <span>Horário de largada: {{ course.startTime }}</span>
-            <span>Categoria: {{ course.category }}</span>
-            <span>Vagas: {{ course.slots }}</span>
-          </div>
-          <Button label="Inscrever-se" />
-        </div>
-      </Panel>
+      <CourseCard
+        v-for="(course, index) in courses"
+        :header="`Percurso ${index + 1}`"
+        :show-subscribe-button="user?.role === 'ATHLETE'"
+        v-bind="course"
+        @subscribe="subscribe(course.id)"
+      />
     </div>
   </Dialog>
 </template>
