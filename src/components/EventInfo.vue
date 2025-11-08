@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, watch, inject } from 'vue';
+  import { ref, reactive, watch, inject } from 'vue';
   import Dialog from 'primevue/dialog';
   import { getCoursesByEvent } from '../api/courses';
   import CourseCard from './CourseCard.vue';
@@ -23,11 +23,23 @@
   }>();
 
   const courses = ref<Course[]>();
+  const subscribedCourses = reactive<number[]>([]);
+  const errorMessages = reactive<{
+    courseId: number;
+    message: string;
+  }[]>([]);
+  const successMessages = reactive<{
+    courseId: number;
+    message: string;
+  }[]>([]);
 
   const getCourses = async () => {
     if (!props.event?.id) {
       return;
     }
+
+    errorMessages.length = 0;
+    successMessages.length = 0;
 
     const response = await getCoursesByEvent(props.event.id);
 
@@ -42,16 +54,29 @@
     const response = await saveRegistration({ courseId: courseId });
 
     if (response.errors) {
-      alert('error');
+      const errorMessage = errorMessages.find(errorMessage => errorMessage.courseId === courseId);
+
+      if (!errorMessage) {
+        errorMessages.push({
+          courseId: courseId,
+          message: response.errors.error,
+        });
+      } else {
+        errorMessage.message = response.errors.error;
+      }
+
       return;
     }
 
-    if (response.data) {
-      alert('success');
-    }
+    successMessages.push({
+      courseId: courseId,
+      message: 'Inscrito no evento com sucesso!',
+    });
+
+    subscribedCourses.push(courseId);
   }
 
-  watch(() => props.event, getCourses);
+  watch(visible, getCourses);
 </script>
 
 <template>
@@ -62,6 +87,9 @@
         v-for="(course, index) in courses"
         :header="`Percurso ${index + 1}`"
         :show-subscribe-button="user?.role === 'ATHLETE'"
+        :is-subscribed="subscribedCourses?.includes(course.id as number)"
+        :error-message="errorMessages.find(errorMessage => errorMessage.courseId === course.id)?.message"
+        :success-message="successMessages.find(successMessage => successMessage.courseId === course.id)?.message"
         v-bind="course"
         @subscribe="subscribe(course.id)"
       />
