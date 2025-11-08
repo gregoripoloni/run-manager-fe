@@ -1,8 +1,17 @@
 <script setup lang="ts">
-  import { ref } from "vue";
+  import { ref, inject } from "vue";
   import Panel from "primevue/panel";
   import PanelMenu from "primevue/panelmenu";
   import { useRouter } from 'vue-router';
+  import { userKey } from '../context/user';
+
+  const userContext = inject(userKey);
+
+  if (!userContext) {
+    throw new Error('User context not provided!');
+  }
+
+  const { user } = userContext;
 
   const router = useRouter();
 
@@ -21,37 +30,36 @@
         router.push('/events');
       },
     },
-    {
+  ]);
+
+  if (user.value?.role === 'ORGANIZER') {
+    items.value.push({
       label: 'Resultados',
       icon: 'pi pi-crown',
-      items: [
-        {
-          label: 'Cadastrar',
-        },
-      ],
-    },
-    {
+      command: () => {},
+    });
+    items.value.push({
       label: 'Relatórios',
       icon: 'pi pi-chart-bar',
-      items: [
-        {
-          label: 'Inscrições',
-        },
-        {
-          label: 'Resultados',
-        },
-      ],
+      command: () => {},
+    });
+  } else {
+    items.value.push({
+      label: 'Grupos',
+      icon: 'pi pi-users',
+      command: () => {},
+    });
+  }
+
+  items.value.push({
+    label: 'Sair',
+    icon: 'pi pi-sign-out',
+    command: () => {
+      localStorage.removeItem('jwt');
+      localStorage.removeItem('user');
+      router.push('/login');
     },
-    {
-      label: 'Sair',
-      icon: 'pi pi-sign-out',
-      command: () => {
-        localStorage.removeItem('jwt');
-        localStorage.removeItem('user');
-        router.push('/login');
-      }
-    },
-  ]);
+  });
 </script>
 
 <template>
