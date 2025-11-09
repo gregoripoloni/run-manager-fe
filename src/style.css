@@ -37,4 +37,8 @@ body,
   .p-select-label {
     line-height: 1.5rem;
   }
+
+  .p-multiselect-label {
+    line-height: 1.5rem;
+  }
 }

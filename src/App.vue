@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { ref, computed, provide } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
+  import Toast from 'primevue/toast';
   import Menu from './components/Menu.vue'
   import Sidebar from './components/Sidebar.vue';
   import { userKey, type User } from './context/user';
@@ -39,4 +40,5 @@
       <RouterView :class="!inUnauthenticatedRoutes ? 'col-span-3' : 'col-span-4'" />
     </main>
   </div>
+  <Toast position="bottom-right" />
 </template>

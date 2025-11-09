@@ -47,7 +47,9 @@
     items.value.push({
       label: 'Grupos',
       icon: 'pi pi-users',
-      command: () => {},
+      command: () => {
+        router.push('/teams/add');
+      },
     });
   }
 

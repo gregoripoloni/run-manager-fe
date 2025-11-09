@@ -1,10 +1,11 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
-import PrimeVue from 'primevue/config'
-import { definePreset } from '@primeuix/themes'
-import Aura from '@primeuix/themes/aura'
-import { router } from './router/index'
+import { createApp } from 'vue';
+import './style.css';
+import App from './App.vue';
+import PrimeVue from 'primevue/config';
+import { definePreset } from '@primeuix/themes';
+import Aura from '@primeuix/themes/aura';
+import { router } from './router/index';
+import ToastService from 'primevue/toastservice';
 
 const MyPreset = definePreset(Aura, {
   semantic: {
@@ -19,19 +20,20 @@ const MyPreset = definePreset(Aura, {
       700: '{teal.700}',
       800: '{teal.800}',
       900: '{teal.900}',
-      950: '{teal.950}'
+      950: '{teal.950}',
     },
-  }
-})
+  },
+});
 
-const app = createApp(App)
-app.use(router)
+const app = createApp(App);
+app.use(router);
 app.use(PrimeVue, {
   theme: {
     preset: MyPreset,
     options: {
       darkModeSelector: '.my-app-dark',
-    }
-  }
-})
-app.mount('#app')
+    },
+  },
+});
+app.use(ToastService);
+app.mount('#app');
