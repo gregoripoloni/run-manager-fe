@@ -40,6 +40,21 @@
       responsibleId: user.value?.userId as number,
       memberIds: form.athletes.value.map(athlete => athlete.id),
     });
+
+    if (response.errors) {
+      if (response.errors.name) {
+        setFieldError('name', response.errors.name);
+      } else {
+        clearFieldError('name');
+      }
+
+      if (response.errors.error) {
+        toast.add({ severity: 'error', summary: 'Erro ao cadastrar grupo', detail: response.errors.error, life: 3000 });
+      }
+
+      return;
+    }
+
     toast.add({ severity: 'success', summary: 'Grupo cadastrado', detail: 'O grupo foi cadastrado com sucesso!', life: 3000 });
     resetForm();
   }
