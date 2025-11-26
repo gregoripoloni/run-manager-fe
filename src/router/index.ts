@@ -6,6 +6,8 @@ import RegisterView from '../views/RegisterView.vue';
 import EventsListView from '../views/EventsListView.vue';
 import EventsAddView from '../views/EventsAddView.vue';
 import TeamsAddView from '../views/TeamsAddView.vue';
+import ResultsAddView from '../views/ResultsAddView.vue';
+import ReportsView from '../views/ReportsView.vue';
 
 const routes = [
   { path: '/', component: HomeView },
@@ -14,6 +16,8 @@ const routes = [
   { path: '/events', component: EventsListView },
   { path: '/events/add', component: EventsAddView },
   { path: '/teams/add', component: TeamsAddView },
+  { path: '/results/add', component: ResultsAddView },
+  { path: '/reports', component: ReportsView },
 ];
 
 export const router = createRouter({

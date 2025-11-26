@@ -41,4 +41,8 @@ body,
   .p-multiselect-label {
     line-height: 1.5rem;
   }
+
+  .p-datatable-tbody > tr:last-child > td {
+    border-bottom: none !important;
+  }
 }

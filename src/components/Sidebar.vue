@@ -36,12 +36,16 @@
     items.value.push({
       label: 'Resultados',
       icon: 'pi pi-crown',
-      command: () => {},
+      command: () => {
+        router.push('/results/add');
+      },
     });
     items.value.push({
       label: 'Relatórios',
       icon: 'pi pi-chart-bar',
-      command: () => {},
+      command: () => {
+        router.push('/reports')
+      },
     });
   } else {
     items.value.push({
