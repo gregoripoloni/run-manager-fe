@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { onMounted, ref } from 'vue';
+  import { onMounted, ref, watch } from 'vue';
   import { useRouter } from 'vue-router';
   import Select from 'primevue/select';
   import Button from 'primevue/button';
@@ -7,25 +7,14 @@
   import MainPanel from '../components/MainPanel.vue';
   import FormField from '../components/FormField.vue';
   import { useFormFields } from '../composables/useFormFields';
+  import { getEventsByOrganizer } from '../api/events';
+  import { getCoursesByEvent } from '../api/courses';
+  import { getAthletesByCourse } from '../api/athletes';
+  import { saveResult } from '../api/results';
 
   const toast = useToast();
 
   const router = useRouter();
-
-  interface Event {
-    id: number;
-    nome: string;
-  }
-
-  interface Course {
-    id: number;
-    nome: string;
-  }
-
-  interface Athlete {
-    id: number;
-    nome: string;
-  }
 
   const { form, resetForm, setFieldError, clearFieldError } = useFormFields({
     eventId: 0,
@@ -34,31 +23,64 @@
     time: '',
   });
 
-  const events = ref<Event[]>();
-  const courses = ref<Course[]>();
-  const athletes = ref<Athlete[]>();
+  const events = ref();
+  const courses = ref();
+  const athletes = ref();
 
   const cancel = () => {
     router.back();
   }
 
   onMounted(async () => {
-    events.value = [
-      { id: 1, nome: 'Evento 1' },
-      { id: 2, nome: 'Evento 2' },
-    ];
-    courses.value = [
-      { id: 1, nome: 'Percurso 1' },
-      { id: 2, nome: 'Percurso 2' },
-    ];
-    athletes.value = [
-      { id: 1, nome: 'Gregori' },
-      { id: 2, nome: 'Paulo' },
-      { id: 3, nome: 'Rodrigo' },
-      { id: 4, nome: 'Vitor' },
-      { id: 5, nome: 'Gabriel' }
-    ];
+    const response = await getEventsByOrganizer();
+    if (response.data) {
+      events.value = response.data;
+    }
   });
+
+  watch(form.eventId, async () => {
+    form.courseId.value = 0;
+    form.athleteId.value = 0;
+    courses.value = [];
+    athletes.value = [];
+    const response = await getCoursesByEvent(form.eventId.value);
+    if (response.data) {
+      courses.value = response.data;
+    }
+  });
+
+  watch(form.courseId, async () => {
+    form.athleteId.value = 0;
+    athletes.value = [];
+    const response = await getAthletesByCourse(form.courseId.value);
+    if (response.data) {
+      athletes.value = response.data;
+    }
+  });
+
+  const save = async () => {
+    const response = await saveResult(form.courseId.value, {
+      registrationId: form.athleteId.value,
+      time: form.time.value,
+    });
+
+    if (response.errors) {
+      // if (response.errors.name) {
+      //   setFieldError('name', response.errors.name);
+      // } else {
+      //   clearFieldError('name');
+      // }
+
+      // if (response.errors.error) {
+      //   toast.add({ severity: 'error', summary: 'Erro ao cadastrar grupo', detail: response.errors.error, life: 3000 });
+      // }
+
+      return;
+    }
+
+    toast.add({ severity: 'success', summary: 'Grupo cadastrado', detail: 'O grupo foi cadastrado com sucesso!', life: 3000 });
+    resetForm();
+  };
 </script>
 
 <template>
@@ -72,8 +94,9 @@
           v-model="form.eventId.value"
           :options="events"
           :invalid="form.eventId.error"
-          option-label="nome"
+          option-label="name"
           option-value="id"
+          empty-message="Nenhuma opção encontrada"
         />
       </FormField>
       <FormField
@@ -83,8 +106,9 @@
         <Select
           v-model="form.courseId.value"
           :options="courses"
-          option-label="nome"
+          :option-label="(course) => `${course.location} - ${course.distanceKm} km - ${course.startTime} - ${course.category}`"
           option-value="id"
+          empty-message="Nenhuma opção encontrada"
         />
       </FormField>
       <FormField
@@ -94,8 +118,9 @@
         <Select
           v-model="form.athleteId.value"
           :options="athletes"
-          option-label="nome"
-          option-value="id"
+          option-label="athleteName"
+          option-value="registrationId"
+          empty-message="Nenhuma opção encontrada"
         />
       </FormField>
       <FormField
@@ -109,7 +134,7 @@
     <template #footer>
       <div class="flex gap-4 w-full justify-end">
         <Button label="Cancelar" severity="secondary" @click="cancel" />
-        <Button label="Salvar" icon="pi pi-check" />
+        <Button label="Salvar" icon="pi pi-check" @click="save" />
       </div>
     </template>
   </MainPanel>

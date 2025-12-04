@@ -7,6 +7,7 @@
   import MainPanel from '../components/MainPanel.vue';
   import FormField from '../components/FormField.vue';
   import { useFormFields } from '../composables/useFormFields';
+  import { getAthletes } from '../api/athletes';
   import { saveTeam } from '../api/teams';
   import { userKey } from '../context/user';
 
@@ -22,23 +23,18 @@
 
   const router = useRouter();
 
-  interface Athlete {
-    id: number,
-    nome: string,
-  }
-
   const { form, resetForm, setFieldError, clearFieldError } = useFormFields({
     name: '',
-    athletes: [] as Athlete[],
+    athletes: [] as number[],
   });
 
-  const athletes = ref<Athlete[]>();
+  const athletes = ref();
 
   const save = async () => {
     const response = await saveTeam({
       name: form.name.value,
       responsibleId: user.value?.userId as number,
-      memberIds: form.athletes.value.map(athlete => athlete.id),
+      memberIds: form.athletes.value,
     });
 
     if (response.errors) {
@@ -64,13 +60,11 @@
   }
 
   onMounted(async () => {
-    athletes.value = [
-      { id: 1, nome: 'Gregori' },
-      { id: 2, nome: 'Paulo' },
-      { id: 3, nome: 'Rodrigo' },
-      { id: 4, nome: 'Vitor' },
-      { id: 5, nome: 'Gabriel' }
-    ];
+    const response = await getAthletes();
+
+    if (response.data) {
+      athletes.value = response.data;
+    }
   });
 </script>
 
@@ -92,7 +86,8 @@
           :options="athletes"
           filter
           display="chip"
-          optionLabel="nome"
+          option-label="name"
+          option-value="id"
         />
       </FormField>
     </div>

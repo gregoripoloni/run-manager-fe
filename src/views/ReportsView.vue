@@ -1,59 +1,79 @@
 <script setup lang="ts">
-  import { onMounted, ref } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
   import Select from 'primevue/select';
-  import Tabs from 'primevue/tabs';
-  import TabList from 'primevue/tablist';
-  import Tab from 'primevue/tab';
-  import TabPanels from 'primevue/tabpanels';
-  import TabPanel from 'primevue/tabpanel';
   import Panel from 'primevue/panel';
   import DataTable from 'primevue/datatable';
   import Column from 'primevue/column';
   import MainPanel from '../components/MainPanel.vue';
   import FormField from '../components/FormField.vue';
   import { useFormFields } from '../composables/useFormFields';
-
-  interface Event {
-    id: number;
-    nome: string;
-  }
-
-  interface Course {
-    id: number;
-    nome: string;
-  }
-
-  interface Athletes {
-    id: number;
-    nome: string;
-    time: string;
-  }
+  import { getEventsByOrganizer } from '../api/events';
+  import { getRankingReport, getRegistrationReport } from '../api/reports';
 
   const { form } = useFormFields({
     eventId: 0,
+    reportId: 0,
     courseId: 0,
   });
 
-  const events = ref<Event[]>();
-  const courses = ref<Course[]>();
-  const athletes = ref<Athletes[]>();
+  const reports = ref([
+    {
+      id: 1,
+      name: 'Inscritos',
+    },
+    {
+      id: 2,
+      name: 'Ranking',
+    },
+  ]);
+
+  const events = ref();
+  const courses = ref();
+  const report = ref();
+
+  const getReport = async () => {
+    courses.value = [];
+    report.value = [];
+
+    form.courseId.value = 0;
+
+    if (!form.eventId.value || !form.reportId.value) {
+      return;
+    }
+
+    let getReport;
+
+    if (form.reportId.value === 1) {
+      getReport = getRegistrationReport;
+    } else {
+      getReport = getRankingReport;
+    }
+
+    const response = await getReport(form.eventId.value);
+    if (response.data) {
+      courses.value = response.data;
+      console.log(response.data);
+    }
+  }
 
   onMounted(async () => {
-    events.value = [
-      { id: 1, nome: 'Evento 1' },
-      { id: 2, nome: 'Evento 2' },
-    ];
-    courses.value = [
-      { id: 1, nome: 'Percurso 1' },
-      { id: 2, nome: 'Percurso 2' },
-    ];
-    athletes.value = [
-      { id: 1, nome: 'Gregori', time: '00:50:43' },
-      { id: 2, nome: 'Paulo', time: '00:53:10' },
-      { id: 3, nome: 'Rodrigo', time: '01:00:26' },
-      { id: 4, nome: 'Vitor', time: '01:20:05' },
-      { id: 5, nome: 'Gabriel', time: '01:35:00' },
-    ];
+    const response = await getEventsByOrganizer();
+    if (response.data) {
+      events.value = response.data;
+    }
+  });
+
+  watch(form.eventId, getReport);
+  watch(form.reportId, getReport);
+
+  watch(form.courseId, async () => {
+    const course = courses.value.find((course: { courseId: number; }) => course.courseId === form.courseId.value);
+
+    if (form.reportId.value === 1) {
+      report.value = course.atletas;
+    } else {
+      report.value = course.ranking;
+    }
   });
 </script>
 
@@ -69,7 +89,20 @@
             v-model="form.eventId.value"
             :options="events"
             :invalid="form.eventId.error"
-            option-label="nome"
+            option-label="name"
+            option-value="id"
+            empty-message="Nenhuma opção encontrada"
+          />
+        </FormField>
+        <FormField
+          label="Relatório"
+          :error-message="form.reportId.errorMessage"
+        >
+          <Select
+            v-model="form.reportId.value"
+            :options="reports"
+            :invalid="form.reportId.error"
+            option-label="name"
             option-value="id"
           />
         </FormField>
@@ -80,34 +113,23 @@
           <Select
             v-model="form.courseId.value"
             :options="courses"
-            option-label="nome"
-            option-value="id"
+            :invalid="form.courseId.error"
+            :option-label="(course) => `${course.courseCategory}`"
+            option-value="courseId"
+            empty-message="Nenhuma opção encontrada"
           />
         </FormField>
       </div>
-      <Tabs value="0">
-        <TabList>
-          <Tab value="0">Inscritos</Tab>
-          <Tab value="1">Ranking</Tab>
-        </TabList>
-        <TabPanels class="!px-0 !py-4">
-          <TabPanel value="0">
-            <Panel class="table-panel">
-              <DataTable :value="athletes" striped-rows>
-                <Column field="nome" header="Nome"></Column>
-              </DataTable>
-            </Panel>
-          </TabPanel>
-          <TabPanel value="1">
-            <Panel class="table-panel">
-              <DataTable :value="athletes" striped-rows>
-                <Column field="nome" header="Nome"></Column>
-                <Column field="time" header="Tempo" sortable></Column>
-              </DataTable>
-            </Panel>
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+      <Panel class="table-panel">
+        <DataTable v-if="form.reportId.value === 1" :value="report" striped-rows>
+          <Column field="name" header="Nome"></Column>
+          <Column field="email" header="Email"></Column>
+        </DataTable>
+        <DataTable v-else :value="report" striped-rows>
+          <Column field="athleteName" header="Nome"></Column>
+          <Column field="elapsedSeconds" header="Tempo de prova"></Column>
+        </DataTable>
+      </Panel>
     </div>
   </MainPanel>
 </template>
