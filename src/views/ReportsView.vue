@@ -56,6 +56,16 @@
     }
   }
 
+  const formatTime = (totalSeconds: number) => {
+    const sec = Math.floor(totalSeconds % 60);
+    const min = Math.floor((totalSeconds / 60) % 60);
+    const hr  = Math.floor(totalSeconds / 3600);
+
+    const pad = (n: number) => String(n).padStart(2, '0');
+
+    return `${pad(hr)}:${pad(min)}:${pad(sec)}`;
+  }
+
   onMounted(async () => {
     const response = await getEventsByOrganizer();
     if (response.data) {
@@ -120,14 +130,16 @@
           />
         </FormField>
       </div>
-      <Panel class="table-panel">
+      <Panel v-if="form.courseId.value" class="table-panel">
         <DataTable v-if="form.reportId.value === 1" :value="report" striped-rows>
           <Column field="name" header="Nome"></Column>
           <Column field="email" header="Email"></Column>
         </DataTable>
         <DataTable v-else :value="report" striped-rows>
           <Column field="athleteName" header="Nome"></Column>
-          <Column field="elapsedSeconds" header="Tempo de prova"></Column>
+          <Column field="elapsedSeconds" header="Tempo de prova" #body="slotProps">
+            {{ formatTime(slotProps.data.elapsedSeconds) }}
+          </Column>
         </DataTable>
       </Panel>
     </div>

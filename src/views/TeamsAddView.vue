@@ -63,7 +63,7 @@
     const response = await getAthletes();
 
     if (response.data) {
-      athletes.value = response.data;
+      athletes.value = response.data.filter((athlete) => athlete.id !== user.value?.userId);
     }
   });
 </script>
