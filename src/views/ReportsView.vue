@@ -114,7 +114,7 @@
             v-model="form.courseId.value"
             :options="courses"
             :invalid="form.courseId.error"
-            :option-label="(course) => `${course.courseCategory}`"
+            :option-label="(course) => `${course.courseLocation} - ${course.courseCategory}`"
             option-value="courseId"
             empty-message="Nenhuma opção encontrada"
           />

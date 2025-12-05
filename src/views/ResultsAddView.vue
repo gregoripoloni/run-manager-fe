@@ -59,26 +59,12 @@
   });
 
   const save = async () => {
-    const response = await saveResult(form.courseId.value, {
+    await saveResult(form.courseId.value, {
       registrationId: form.athleteId.value,
       time: form.time.value,
     });
 
-    if (response.errors) {
-      // if (response.errors.name) {
-      //   setFieldError('name', response.errors.name);
-      // } else {
-      //   clearFieldError('name');
-      // }
-
-      // if (response.errors.error) {
-      //   toast.add({ severity: 'error', summary: 'Erro ao cadastrar grupo', detail: response.errors.error, life: 3000 });
-      // }
-
-      return;
-    }
-
-    toast.add({ severity: 'success', summary: 'Grupo cadastrado', detail: 'O grupo foi cadastrado com sucesso!', life: 3000 });
+    toast.add({ severity: 'success', summary: 'Resultado cadastrado', detail: 'O resultado foi cadastrado com sucesso!', life: 3000 });
     resetForm();
   };
 </script>
@@ -106,7 +92,7 @@
         <Select
           v-model="form.courseId.value"
           :options="courses"
-          :option-label="(course) => `${course.location} - ${course.distanceKm} km - ${course.startTime} - ${course.category}`"
+          :option-label="(course) => `${course.location} - ${course.category}`"
           option-value="id"
           empty-message="Nenhuma opção encontrada"
         />
