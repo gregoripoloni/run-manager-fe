@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, onMounted, ref, watch } from 'vue';
+  import { onMounted, ref, watch } from 'vue';
   import Select from 'primevue/select';
   import Panel from 'primevue/panel';
   import DataTable from 'primevue/datatable';

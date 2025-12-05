@@ -16,7 +16,7 @@
 
   const router = useRouter();
 
-  const { form, resetForm, setFieldError, clearFieldError } = useFormFields({
+  const { form, resetForm } = useFormFields({
     eventId: 0,
     courseId: 0,
     athleteId: 0,
